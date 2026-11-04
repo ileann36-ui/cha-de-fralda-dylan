@@ -645,6 +645,266 @@ textarea.input { min-height: 6.5rem; resize: vertical; line-height: 1.5; }
 .noscript { margin: 1rem; padding: 1rem; border-radius: var(--r-sm); background: var(--warn-bg); color: var(--warn); font-weight: 700; text-align: center; }
 
 </style>
+  <style>
+/* ==========================================================
+   Painel interno da LP. Abre em  seu-site/#painel  e pede a senha.
+   Para quem abre a LP normalmente, nada disto aparece.
+   ========================================================== */
+
+body.modo-painel > *:not(#painelApp):not(svg):not(script):not(style) { display: none !important; }
+body.modo-painel { background: var(--sky-50); }
+
+.pn {
+  min-height: 100vh;
+  padding-bottom: 3rem;
+  font-size: .98rem;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--sky-50);
+}
+.pn__wrap {
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
+  padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- barra de cima ---------- */
+.pn__top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--navy-deep);
+  color: #fff;
+  box-shadow: 0 8px 20px -12px rgba(15, 36, 87, .7);
+}
+.pn__top .pn__wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  padding-block: .7rem;
+}
+.pn__brand { display: flex; align-items: center; gap: .6rem; min-width: 0; }
+.pn__brand svg { width: 26px; height: 26px; flex: none; color: var(--gold-soft); }
+.pn__brand b { font-family: var(--font-serif); font-weight: 600; font-size: 1.02rem; }
+.pn__brand .script { font-family: var(--font-script); font-size: 1.5rem; line-height: 1; color: var(--gold-soft); }
+.pn__actions { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .6rem; }
+.pn__status { font-size: .82rem; color: var(--sky-300); }
+
+/* ---------- botões e campos ---------- */
+.pn-btn {
+  appearance: none;
+  min-height: 40px;
+  padding: .45rem 1.05rem;
+  border: 1.5px solid var(--navy);
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  font-weight: 700;
+  font-size: .9rem;
+  cursor: pointer;
+}
+.pn-btn:hover { background: var(--navy-deep); }
+.pn-btn--ghost { background: transparent; color: var(--navy); }
+.pn-btn--ghost:hover { background: var(--sky-100); }
+.pn__top .pn-btn {
+  min-height: 36px;
+  padding: .3rem .85rem;
+  background: transparent;
+  border-color: rgba(255, 255, 255, .5);
+  color: #fff;
+}
+.pn__top .pn-btn:hover { background: rgba(255, 255, 255, .13); }
+
+.pn-input {
+  width: 100%;
+  min-height: 46px;
+  padding: .55rem .9rem;
+  border: 1.5px solid var(--sky-300);
+  border-radius: var(--r-sm);
+  background: #fff;
+}
+.pn-input:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(95, 147, 207, .35); }
+
+/* ---------- entrada com senha ---------- */
+.pn-login {
+  display: grid;
+  gap: 1rem;
+  max-width: 420px;
+  margin: 3rem auto;
+  padding: 1.6rem;
+  border: 1px solid var(--sky-200);
+  border-radius: var(--r-md);
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+.pn-login h1 { font-family: var(--font-serif); font-size: 1.4rem; color: var(--navy); }
+.pn-login p { color: var(--muted); font-size: .92rem; }
+.pn-login label { font-weight: 700; font-size: .9rem; color: var(--navy); }
+.pn-login__row { display: flex; gap: .5rem; margin-top: .35rem; }
+.pn-check { display: flex; align-items: center; gap: .5rem; font-weight: 600 !important; color: var(--ink) !important; }
+.pn-check input { width: 18px; height: 18px; accent-color: var(--navy); }
+.pn-erro { min-height: 1.3em; color: var(--err); font-weight: 700; font-size: .9rem; }
+
+/* ---------- títulos de seção ---------- */
+.pn-h {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .3rem .65rem;
+  margin: 2.2rem 0 .8rem;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+.pn-count {
+  padding: .1rem .65rem;
+  border-radius: 999px;
+  background: var(--sky-200);
+  color: var(--navy);
+  font-family: var(--font-sans);
+  font-size: .8rem;
+  font-weight: 800;
+}
+.pn-vazio {
+  padding: 1.4rem;
+  border: 1.5px dashed var(--sky-300);
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, .6);
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- números principais ---------- */
+.pn-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: .75rem; margin-top: 1.4rem; }
+.pn-kpi {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--sky-200);
+  border-radius: var(--r-md);
+  background: #fff;
+}
+.pn-kpi__l { font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.pn-kpi__v { font-family: var(--font-serif); font-size: 2.2rem; line-height: 1.15; font-weight: 600; color: var(--navy); font-variant-numeric: tabular-nums; }
+.pn-kpi__s { font-size: .85rem; color: var(--muted); }
+.pn-kpi--main { background: var(--navy); border-color: var(--navy); }
+.pn-kpi--main .pn-kpi__l, .pn-kpi--main .pn-kpi__s { color: var(--sky-300); }
+.pn-kpi--main .pn-kpi__v { color: #fff; }
+
+/* ---------- fraldas ---------- */
+.pn-sizes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .75rem; }
+.pn-size { display: grid; gap: .65rem; padding: 1.1rem; border: 1px solid var(--sky-200); border-radius: var(--r-md); background: #fff; }
+.pn-size__head { display: flex; align-items: center; gap: .9rem; }
+.pn-size__letter {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--gold-soft);
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.pn-size__n { font-size: .95rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pn-size__n strong { font-family: var(--font-serif); font-size: 1.9rem; line-height: 1; color: var(--navy); }
+.pn-size__s { font-size: .86rem; font-weight: 700; color: var(--ink); }
+.pn-size__s.is-over { color: var(--warn); }
+.pn-size__s.is-ok { color: var(--ok); }
+.pn-bar { height: 10px; border-radius: 999px; background: var(--sky-100); overflow: hidden; }
+.pn-bar__fill { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--sky-500), var(--navy)); transition: width .5s ease; }
+.pn-bar__fill.is-over { background: linear-gradient(90deg, var(--gold), var(--gold-deep)); }
+
+/* ---------- tabelas e listas ---------- */
+.pn-tablewrap { overflow-x: auto; border: 1px solid var(--sky-200); border-radius: var(--r-md); background: #fff; }
+.pn-table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+.pn-table th {
+  padding: .6rem .8rem;
+  background: var(--sky-100);
+  color: var(--muted);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pn-table td { padding: .65rem .8rem; border-top: 1px solid var(--sky-100); vertical-align: top; }
+.pn-table .num { text-align: center; font-variant-numeric: tabular-nums; }
+.pn-table tfoot td { background: var(--sky-50); font-weight: 800; color: var(--navy); }
+.pn-table .nome { font-weight: 700; color: var(--navy); overflow-wrap: anywhere; }
+.pn-table a { color: var(--navy); text-decoration-color: var(--gold); text-underline-offset: 3px; }
+.pn-tag {
+  display: inline-block;
+  padding: .05rem .55rem;
+  border-radius: 999px;
+  background: var(--sky-100);
+  color: var(--navy);
+  font-size: .8rem;
+  font-weight: 800;
+}
+
+.pn-tools { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; margin-bottom: .7rem; }
+.pn-tools .pn-input { flex: 1 1 220px; max-width: 360px; }
+.pn-chips { display: flex; gap: .35rem; }
+.pn-chip {
+  appearance: none;
+  min-width: 2.6rem;
+  min-height: 40px;
+  padding: .3rem .8rem;
+  border: 1.5px solid var(--sky-300);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--navy);
+  font-weight: 800;
+  cursor: pointer;
+}
+.pn-chip[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.pn-tools .pn-btn { margin-left: auto; }
+.pn-mostrando { margin-bottom: .5rem; font-size: .85rem; color: var(--muted); }
+
+.pn details > summary { display: flex; align-items: baseline; gap: 1rem; margin-top: 2.2rem; cursor: pointer; list-style: none; }
+.pn details > summary::-webkit-details-marker { display: none; }
+.pn details > summary .pn-h { margin: 0; }
+.pn details > summary::after { content: "mostrar"; margin-left: auto; font: 700 .85rem var(--font-sans); color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.pn details[open] > summary { margin-bottom: .8rem; }
+.pn details[open] > summary::after { content: "ocultar"; }
+
+/* ---------- mensagens ---------- */
+.pn-msgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .75rem; }
+.pn-msg { display: flex; flex-direction: column; gap: .7rem; padding: 1.05rem 1.15rem; border: 1px solid var(--sky-200); border-radius: var(--r-md); background: #fff; }
+.pn-msg__t { font-family: var(--font-serif); font-size: 1.02rem; color: var(--navy); white-space: pre-wrap; overflow-wrap: anywhere; }
+.pn-msg__f { margin-top: auto; font-size: .82rem; color: var(--muted); }
+.pn-msg__f b { color: var(--ink); }
+
+/* ---------- celular: cada linha da lista vira um cartão ---------- */
+@media (max-width: 720px) {
+  .pn-table--stack thead { display: none; }
+  .pn-table--stack tr { display: block; padding: .7rem .9rem; border-top: 1px solid var(--sky-200); }
+  .pn-table--stack tr:first-child { border-top: 0; }
+  .pn-table--stack td { display: flex; justify-content: space-between; gap: 1rem; padding: .22rem 0; border: 0; text-align: right; }
+  .pn-table--stack td::before {
+    content: attr(data-l);
+    flex: none;
+    padding-top: .12rem;
+    color: var(--muted);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+  .pn-table--stack .num { text-align: right; }
+  .pn-tools .pn-btn { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .pn-bar__fill { transition: none; } }
+
+</style>
 </head>
 <body>
 
@@ -742,7 +1002,7 @@ textarea.input { min-height: 6.5rem; resize: vertical; line-height: 1.5; }
         </div>
       </div>
 
-      <p class="local-note" id="localNote">O local ainda está sendo escolhido, mas será em Contagem. Quem confirmar presença recebe o endereço assim que estiver definido.</p>
+      <p class="local-note" id="localNote">O local ainda está sendo escolhido, mas será em Contagem. Quem confirmar presença recebe o endereço pelo WhatsApp assim que estiver definido.</p>
 
       <div class="when">
         <p class="countdown" id="countdown"></p>
@@ -814,9 +1074,9 @@ textarea.input { min-height: 6.5rem; resize: vertical; line-height: 1.5; }
         </div>
 
         <div class="field">
-          <label for="whats">WhatsApp <span class="opt">(opcional)</span></label>
+          <label for="whats">WhatsApp <span class="opt">(obrigatório para quem vai)</span></label>
           <input class="input" id="whats" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" placeholder="(31) 99999-9999" aria-describedby="whats-dica whats-erro">
-          <p class="field__hint" id="whats-dica">Usamos só para avisar o endereço e qualquer mudança.</p>
+          <p class="field__hint" id="whats-dica">É por aqui que vamos enviar o endereço do local e qualquer mudança. Não compartilhamos seu número.</p>
           <p class="field__error" id="whats-erro" role="alert"></p>
         </div>
 
@@ -943,6 +1203,9 @@ textarea.input { min-height: 6.5rem; resize: vertical; line-height: 1.5; }
   <a class="btn btn--primary btn--block" href="#confirmar" tabindex="-1">Confirmar presença</a>
 </div>
 
+<!-- painel interno: só aparece em  seu-site/#painel  e com a senha; fica oculto para os convidados -->
+<section id="painelApp" hidden aria-label="Painel de respostas"></section>
+
 <script>
 /* ==========================================================
    Configurações da LP. Tudo aqui é opcional, exceto se você quiser mudar datas.
@@ -956,6 +1219,16 @@ window.DYLAN_CONFIG = {
   // Endereço do local (opcional). Quando for definido, escreva aqui: o aviso
   // "ainda sendo escolhido" some e aparece um link para o mapa.
   endereco: "",
+
+  // Supabase (opcional): endereço do projeto e chave PUBLISHABLE (começa com sb_publishable_).
+  // Essa chave é pública por natureza e fica visível na página. NUNCA cole aqui a chave "secret"
+  // nem a "service_role": elas dão acesso total ao banco. Passo a passo em supabase/LEIA-ME.md.
+  supabaseUrl: "https://dftddwkpamvnkoeizzze.supabase.co",
+  supabaseKey: "sb_publishable_55M1O9qQKwwwR9sUueRrhQ_3Jrb7vhC",
+
+  // Endereço do script da planilha do Google (opcional). Termina em /exec.
+  // Quando preenchido, cada confirmação vira uma linha na planilha (passo a passo em planilha/LEIA-ME.md).
+  planilhaUrl: "",
 
   // Chave do Web3Forms (opcional). Com ela, cada confirmação chega no seu e-mail.
   // Crie grátis em web3forms.com ("Create your Access Key"), cole a chave aqui, entre as aspas.
@@ -1277,7 +1550,9 @@ window.DYLAN_CONFIG = {
     const errs = [];
     if (d.nome.length < 2) errs.push(['nome', 'Escreva seu nome para a gente saber quem confirmou.']);
     const w = digits(d.whatsapp);
-    if (d.whatsapp && (w.length < 10 || w.length > 11)) errs.push(['whats', 'Confira o número: use DDD e 8 ou 9 dígitos.']);
+    // quem vai recebe o endereço do local pelo WhatsApp, então ele é obrigatório para "Sim"
+    if (d.presenca === 'Sim' && !w) errs.push(['whats', 'Precisamos do seu WhatsApp para enviar o endereço do local.']);
+    else if (d.whatsapp && (w.length < 10 || w.length > 11)) errs.push(['whats', 'Confira o número: use DDD e 8 ou 9 dígitos.']);
     if (!d.presenca) errs.push(['presenca', 'Escolha uma das opções para continuar.']);
     return errs;
   }
@@ -1298,29 +1573,94 @@ window.DYLAN_CONFIG = {
     }
   }
 
+  /* ---------- envio das respostas (planilha do Google e/ou e-mail) ---------- */
   const WEB3_KEY = String(CFG.web3formsKey || '').trim();
+  const SHEET_URL = String(CFG.planilhaUrl || '').trim();
+  const SB_URL = String(CFG.supabaseUrl || '').trim().replace(/\/+$/, '');
+  const SB_KEY = String(CFG.supabaseKey || '').trim();
+  const USA_SB = !!(SB_URL && SB_KEY);
+  const ENVIA = !!(WEB3_KEY || SHEET_URL || USA_SB);
+  const novoId = () => (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  // o mesmo id vale para tentativas repetidas da mesma resposta: a planilha ignora a repetição
+  let envioId = novoId();
 
-  async function enviarWeb3Forms(d) {
+  async function enviarParaPlanilha(dados, signal) {
+    const opts = { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados), signal };
+    try {
+      const r = await fetch(SHEET_URL, opts);
+      const j = await r.json();
+      return !!(j && j.ok);
+    } catch (err) {
+      if (signal.aborted) return false;
+      // o navegador pode ter bloqueado só a leitura da resposta; reenvia sem ler (repetido é ignorado)
+      try { await fetch(SHEET_URL, { ...opts, mode: 'no-cors' }); return true; } catch (e2) { return false; }
+    }
+  }
+
+  async function enviarParaSupabase(dados, signal) {
+    const num = v => { const n = parseInt(v, 10); return Number.isNaN(n) ? null : n; };
+    const txt = v => { const s = String(v == null ? '' : v).trim(); return s === '' ? null : s; };
+    const linha = {
+      envio_id: dados.envio_id,
+      convite_numero: num(dados.convite_numero),
+      nome: txt(dados.nome),
+      whatsapp: txt(dados.whatsapp),
+      presenca: dados.presenca,
+      acompanhantes_adultos: num(dados.acompanhantes_adultos) || 0,
+      acompanhantes_criancas: num(dados.acompanhantes_criancas) || 0,
+      total_pessoas: num(dados.total_pessoas) || 0,
+      fralda_tamanho: txt(dados.fralda_tamanho),
+      fralda_marca: txt(dados.fralda_marca),
+      recado: txt(dados.recado),
+      evento: txt(dados.evento)
+    };
+    const r = await fetch(`${SB_URL}/rest/v1/respostas`, {
+      method: 'POST',
+      // só "apikey" (chave publishable); "return=minimal" porque o público não pode ler de volta
+      headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Prefer: 'return=minimal' },
+      body: JSON.stringify(linha),
+      signal
+    });
+    return r.ok || r.status === 409; // 409 = essa mesma resposta já estava salva (reenvio)
+  }
+
+  async function enviarParaEmail(dados, d, signal) {
+    const corpo = {
+      ...dados,
+      access_key: WEB3_KEY,
+      from_name: 'LP Chá de Fraldas do Dylan',
+      subject: `${d.presenca === 'Sim' ? 'Confirmou' : 'Não vai'}: ${d.nome} (convite ${convite.numero || 'sem número'})`
+    };
+    const r = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(corpo),
+      signal
+    });
+    const j = await r.json().catch(() => ({}));
+    return r.ok && !!j.success;
+  }
+
+  async function enviarRespostas(d) {
     const dados = Object.fromEntries(new FormData(form).entries());
     if (dados.botcheck) { showDone(d); return; } // robô: finge que deu certo e não envia nada
     delete dados.botcheck;
-    dados.access_key = WEB3_KEY;
-    dados.from_name = 'LP Chá de Fraldas do Dylan';
-    dados.subject = `${d.presenca === 'Sim' ? 'Confirmou' : 'Não vai'}: ${d.nome} (convite ${convite.numero || 'sem número'})`;
+    dados.envio_id = envioId;
 
     els.submit.disabled = true;
     els.submit.textContent = 'Enviando…';
     const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 20000);
+    const timer = setTimeout(() => ctl.abort(), 25000);
     try {
-      const r = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(dados),
-        signal: ctl.signal
-      });
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok || !j.success) throw new Error(j.message || `HTTP ${r.status}`);
+      const tarefas = [];
+      if (USA_SB) tarefas.push(enviarParaSupabase(dados, ctl.signal).catch(() => false));
+      if (SHEET_URL) tarefas.push(enviarParaPlanilha(dados, ctl.signal).catch(() => false));
+      if (WEB3_KEY) tarefas.push(enviarParaEmail(dados, d, ctl.signal).catch(() => false));
+      const resultados = await Promise.all(tarefas);
+      // basta um dos destinos confirmar: o outro serve de reserva
+      if (!resultados.some(Boolean)) throw new Error('nenhum destino confirmou');
       showDone(d);
     } catch (err) {
       els.error.textContent = 'Não conseguimos enviar agora. Confira a internet e toque em confirmar de novo. Se continuar, avise a família pelo WhatsApp.';
@@ -1357,10 +1697,10 @@ window.DYLAN_CONFIG = {
       return;
     }
 
-    if (WEB3_KEY) {
-      // sem action, mas com chave do Web3Forms: envia por trás e depois mostra o agradecimento
+    if (ENVIA) {
+      // sem action, mas com planilha e/ou chave de e-mail: envia por trás e depois mostra o agradecimento
       e.preventDefault();
-      enviarWeb3Forms(d);
+      enviarRespostas(d);
       return;
     }
 
@@ -1405,6 +1745,7 @@ window.DYLAN_CONFIG = {
     else if (acomp === 0) texto = 'Anotamos você. Vai ser lindo ter você com a gente.';
     else texto = `Anotamos você e ${plural(acomp, 'acompanhante', 'acompanhantes')} (${plural(d.adultos, 'adulto', 'adultos')} e ${plural(d.criancas, 'criança', 'crianças')}), ${plural(acomp + 1, 'pessoa', 'pessoas')} no total. Vai ser lindo ter vocês com a gente.`;
     if (sim) texto += ` Fralda combinada: tamanho ${convite.tamanho}.`;
+    if (sim && !CFG.endereco) texto += ' Vamos enviar o endereço do local para o seu WhatsApp.';
     $('#doneText').textContent = texto;
 
     $('#doneBadge').classList.toggle('done__badge--no', !sim);
@@ -1438,6 +1779,7 @@ window.DYLAN_CONFIG = {
     counts.criancas = 0;
     els.count.textContent = '0';
     aplicarTamanho(); // o reset zera os campos ocultos
+    envioId = novoId(); // outra pessoa, outra resposta
     renderVai();
     renderPeople();
     done.hidden = true;
@@ -1457,6 +1799,379 @@ window.DYLAN_CONFIG = {
     new IntersectionObserver(([e]) => { seen.hero = e.isIntersecting; update(); }).observe($('#heroCta'));
     new IntersectionObserver(([e]) => { seen.form = e.isIntersecting; update(); }, { threshold: .1 }).observe($('#confirmar'));
   })();
+})();
+
+</script>
+<script>
+/* ==========================================================
+   Painel interno da LP: abre em  seu-site/#painel  e pede a senha.
+   Os dados vêm ao vivo do Supabase pela função painel_dados(senha); sem a senha certa
+   o banco não devolve nada. Para quem abre a LP normalmente, este arquivo não mostra nada.
+   ========================================================== */
+(function () {
+  'use strict';
+
+  const root = document.getElementById('painelApp');
+  if (!root) return;
+
+  const CFG = window.DYLAN_CONFIG || {};
+  const SB_URL = String(CFG.supabaseUrl || '').trim().replace(/\/+$/, '');
+  const SB_KEY = String(CFG.supabaseKey || '').trim();
+  const CHAVE = 'dylan_painel_senha';
+  const TITULO_ORIGINAL = document.title;
+  const TAMANHOS = ['P', 'M', 'G'];
+  const MARCAS_BASE = ['Pampers', 'Huggies', 'Outra marca', 'Ainda não sei'];
+
+  /* ---------- utilidades ---------- */
+  const memoria = {
+    ler() { try { return localStorage.getItem(CHAVE) || sessionStorage.getItem(CHAVE) || ''; } catch (e) { return ''; } },
+    gravar(v, lembrar) {
+      try {
+        sessionStorage.setItem(CHAVE, v);
+        if (lembrar) localStorage.setItem(CHAVE, v); else localStorage.removeItem(CHAVE);
+      } catch (e) { /* sem armazenamento: pede a senha de novo, sem problema */ }
+    },
+    apagar() { try { localStorage.removeItem(CHAVE); sessionStorage.removeItem(CHAVE); } catch (e) {} }
+  };
+
+  // monta elementos sem innerHTML: nomes e recados vêm de convidados e nunca viram HTML
+  function h(tag, attrs, ...filhos) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    }
+    filhos.flat().forEach(f => { if (f != null && f !== false) el.append(f.nodeType ? f : document.createTextNode(String(f))); });
+    return el;
+  }
+
+  const nf = new Intl.NumberFormat('pt-BR');
+  const fuso = { timeZone: 'America/Sao_Paulo' };
+  const quando = iso => {
+    try { return new Date(iso).toLocaleString('pt-BR', { ...fuso, day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', ''); }
+    catch (e) { return ''; }
+  };
+  const quandoCompleto = iso => {
+    try { return new Date(iso).toLocaleString('pt-BR', { ...fuso, dateStyle: 'short', timeStyle: 'short' }).replace(',', ''); }
+    catch (e) { return ''; }
+  };
+  const hora = d => d.toLocaleTimeString('pt-BR', { ...fuso, hour: '2-digit', minute: '2-digit' });
+  const norm = s => String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const plural = (n, um, varios) => `${nf.format(n)} ${n === 1 ? um : varios}`;
+
+  /* ---------- estado ---------- */
+  let dados = null;
+  let senha = '';
+  let timer = null;
+  let montado = false;
+  let carregando = false;
+  const filtro = { texto: '', tam: 'T' };
+  const el = {};   // atalhos para partes da tela
+
+  /* ---------- tela ---------- */
+  function montar() {
+    root.textContent = '';
+    el.status = h('span', { class: 'pn__status', role: 'status' });
+    el.atualizar = h('button', { class: 'pn-btn', type: 'button', onclick: () => carregar(), hidden: true, text: 'Atualizar' });
+    el.sair = h('button', { class: 'pn-btn', type: 'button', onclick: sair, hidden: true, text: 'Sair' });
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    const uso = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    uso.setAttribute('href', '#i-crown');
+    svg.appendChild(uso);
+
+    const topo = h('header', { class: 'pn__top' },
+      h('div', { class: 'pn__wrap' },
+        h('div', { class: 'pn__brand' }, svg,
+          h('b', { text: 'Painel de respostas' }),
+          h('span', { class: 'script', text: 'Dylan' })),
+        h('div', { class: 'pn__actions' }, el.status, el.atualizar, el.sair)));
+
+    el.login = h('div', { class: 'pn__wrap' });
+    el.conteudo = h('main', { class: 'pn__wrap', hidden: true });
+    root.append(h('div', { class: 'pn' }, topo, el.login, el.conteudo));
+  }
+
+  function mostrarLogin(mensagem) {
+    el.conteudo.hidden = true;
+    el.atualizar.hidden = true;
+    el.sair.hidden = true;
+    el.status.textContent = '';
+
+    const campo = h('input', { class: 'pn-input', id: 'pnSenha', type: 'password', autocomplete: 'current-password', required: true, spellcheck: 'false', autocapitalize: 'off' });
+    const mostrar = h('button', {
+      class: 'pn-btn pn-btn--ghost', type: 'button', 'aria-label': 'Mostrar ou esconder a senha', text: 'Ver',
+      onclick: () => { campo.type = campo.type === 'password' ? 'text' : 'password'; }
+    });
+    const lembrar = h('input', { type: 'checkbox', id: 'pnLembrar' });
+    const erro = h('p', { class: 'pn-erro', role: 'alert', text: mensagem || '' });
+    const entrar = h('button', { class: 'pn-btn', type: 'submit', text: 'Entrar' });
+
+    const form = h('form', {
+      class: 'pn-login',
+      onsubmit: e => {
+        e.preventDefault();
+        const v = campo.value.trim();
+        if (!v) { erro.textContent = 'Digite a senha do painel.'; campo.focus(); return; }
+        erro.textContent = '';
+        entrar.disabled = true;
+        senha = v;
+        memoria.gravar(v, lembrar.checked);
+        carregar().finally(() => { entrar.disabled = false; });
+      }
+    },
+      h('h1', { text: 'Painel de respostas' }),
+      h('p', { text: 'Área da família. Digite a senha para ver quem confirmou, as fraldas e os recados.' }),
+      h('div', {}, h('label', { for: 'pnSenha', text: 'Senha' }), h('div', { class: 'pn-login__row' }, campo, mostrar)),
+      h('label', { class: 'pn-check', for: 'pnLembrar' }, lembrar, 'Lembrar neste aparelho'),
+      erro, entrar);
+    el.login.replaceChildren(form);
+    campo.focus({ preventScroll: true });
+  }
+
+  function mostrarPainel() {
+    el.login.replaceChildren();
+    el.conteudo.hidden = false;
+    el.atualizar.hidden = false;
+    el.sair.hidden = false;
+  }
+
+  function sair() {
+    memoria.apagar();
+    senha = '';
+    dados = null;
+    mostrarLogin('');
+  }
+
+  /* ---------- dados ---------- */
+  async function carregar() {
+    if (!senha || carregando) return;
+    carregando = true;
+    el.status.textContent = 'Atualizando…';
+    let r;
+    try {
+      const resp = await fetch(`${SB_URL}/rest/v1/rpc/painel_dados`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: SB_KEY },
+        body: JSON.stringify({ p_senha: senha })
+      });
+      r = await resp.json().catch(() => ({}));
+      if (!resp.ok) { const e = new Error(r.message || `HTTP ${resp.status}`); e.codigo = r.code; throw e; }
+    } catch (e) {
+      carregando = false;
+      if (dados) { el.status.textContent = 'Sem conexão. Mostrando a última atualização.'; return; }
+      mostrarLogin(e.codigo === 'PGRST202'
+        ? 'O painel ainda não foi ativado no banco de dados.'
+        : 'Não foi possível falar com o banco de dados. Confira a internet e tente de novo.');
+      return;
+    }
+    carregando = false;
+    if (r.erro === 'senha') { memoria.apagar(); senha = ''; dados = null; mostrarLogin('Senha incorreta.'); return; }
+    if (r.erro === 'bloqueado') { memoria.apagar(); senha = ''; dados = null; mostrarLogin('Muitas tentativas erradas. Espere 10 minutos e tente de novo.'); return; }
+    dados = r;
+    mostrarPainel();
+    desenhar();
+  }
+
+  /* ---------- desenho do painel ---------- */
+  function kpi(rotulo, valor, sub, destaque) {
+    return h('div', { class: 'pn-kpi' + (destaque ? ' pn-kpi--main' : '') },
+      h('p', { class: 'pn-kpi__l', text: rotulo }),
+      h('p', { class: 'pn-kpi__v', text: nf.format(valor) }),
+      sub ? h('p', { class: 'pn-kpi__s', text: sub }) : null);
+  }
+
+  function secao(titulo, n) {
+    return h('h2', { class: 'pn-h' }, titulo, n == null ? null : h('span', { class: 'pn-count', text: nf.format(n) }));
+  }
+
+  function linkWhats(txt) {
+    const d = String(txt || '').replace(/\D/g, '');
+    if (!d) return '—';
+    if (d.length < 10 || d.length > 11) return txt;
+    return h('a', { href: `https://wa.me/55${d}`, target: '_blank', rel: 'noopener', text: txt });
+  }
+
+  function desenhar() {
+    // a cada minuto a tela é refeita: guarda o foco da busca para não atrapalhar quem está digitando
+    const estavaBuscando = !!el.busca && document.activeElement === el.busca;
+    const t = dados.totais || {};
+    const acomp = (t.acompanhantes_adultos || 0) + (t.acompanhantes_criancas || 0);
+    const totalConvites = (t.convites_respondidos || 0) + (t.convites_sem_resposta || 0);
+    el.status.textContent = `Atualizado às ${hora(new Date(dados.atualizado_em))}. Atualiza sozinho a cada minuto.`;
+
+    const partes = [];
+
+    // números principais
+    partes.push(h('div', { class: 'pn-kpis' },
+      kpi('Pessoas esperadas', t.total_de_pessoas || 0, 'convidados + acompanhantes', true),
+      kpi('Convidados confirmados', t.convidados_confirmados || 0),
+      kpi('Acompanhantes', acomp, `${plural(t.acompanhantes_adultos || 0, 'adulto', 'adultos')} e ${plural(t.acompanhantes_criancas || 0, 'criança', 'crianças')}`),
+      kpi('Não vão', t.avisaram_que_nao_vao || 0),
+      kpi('Convites sem resposta', t.convites_sem_resposta || 0, totalConvites ? `de ${nf.format(totalConvites)} convites` : '')));
+
+    // fraldas por tamanho
+    partes.push(secao('Fraldas por tamanho'));
+    partes.push(h('div', { class: 'pn-sizes' }, (dados.fraldas || []).map(f => {
+      const pct = f.meta ? Math.min(100, Math.round((f.confirmadas / f.meta) * 100)) : 0;
+      const acima = f.confirmadas > f.meta;
+      const sub = acima ? `${plural(f.confirmadas - f.meta, 'fralda', 'fraldas')} acima da meta`
+        : f.falta === 0 ? 'Meta atingida' : `Faltam ${plural(f.falta, 'fralda', 'fraldas')}`;
+      return h('article', { class: 'pn-size' },
+        h('div', { class: 'pn-size__head' },
+          h('span', { class: 'pn-size__letter', text: f.tamanho }),
+          h('p', { class: 'pn-size__n' }, h('strong', { text: nf.format(f.confirmadas) }), ` de ${nf.format(f.meta)}`)),
+        h('div', { class: 'pn-bar', role: 'progressbar', 'aria-label': `Fralda ${f.tamanho}`, 'aria-valuemin': 0, 'aria-valuemax': f.meta, 'aria-valuenow': f.confirmadas },
+          h('span', { class: 'pn-bar__fill' + (acima ? ' is-over' : ''), style: `width:${pct}%` })),
+        h('p', { class: 'pn-size__s' + (acima ? ' is-over' : f.falta === 0 ? ' is-ok' : ''), text: sub }));
+    })));
+
+    // tamanho x marca
+    const porMarca = {};
+    (dados.fraldas_por_marca || []).forEach(x => { (porMarca[x.tamanho] = porMarca[x.tamanho] || {})[x.marca] = x.quantidade; });
+    const extras = [...new Set((dados.fraldas_por_marca || []).map(x => x.marca))].filter(m => !MARCAS_BASE.includes(m));
+    const marcas = MARCAS_BASE.concat(extras);
+    const totMarca = Object.fromEntries(marcas.map(m => [m, 0]));
+    let totGeral = 0;
+    const linhas = TAMANHOS.map(tam => {
+      let soma = 0;
+      const cels = marcas.map(m => { const q = (porMarca[tam] || {})[m] || 0; soma += q; totMarca[m] += q; return h('td', { class: 'num', text: q ? nf.format(q) : '—' }); });
+      totGeral += soma;
+      return h('tr', {}, h('td', {}, h('span', { class: 'pn-tag', text: tam })), cels, h('td', { class: 'num', text: nf.format(soma) }));
+    });
+    partes.push(secao('Fraldas por tamanho e marca'));
+    partes.push(h('div', { class: 'pn-tablewrap' }, h('table', { class: 'pn-table' },
+      h('thead', {}, h('tr', {}, h('th', { text: 'Tamanho' }), marcas.map(m => h('th', { class: 'num', text: m })), h('th', { class: 'num', text: 'Total' }))),
+      h('tbody', {}, linhas),
+      h('tfoot', {}, h('tr', {}, h('td', { text: 'Total' }), marcas.map(m => h('td', { class: 'num', text: nf.format(totMarca[m]) })), h('td', { class: 'num', text: nf.format(totGeral) }))))));
+
+    // confirmados
+    const conf = dados.confirmados || [];
+    partes.push(secao('Quem confirmou', conf.length));
+    if (!conf.length) {
+      partes.push(h('p', { class: 'pn-vazio', text: 'Ninguém confirmou ainda. As respostas aparecem aqui assim que chegarem.' }));
+    } else {
+      el.busca = h('input', {
+        class: 'pn-input', type: 'search', id: 'pnBusca', placeholder: 'Buscar nome, WhatsApp ou nº', 'aria-label': 'Buscar confirmados', value: filtro.texto,
+        oninput: e => { filtro.texto = e.target.value; desenharLista(); }
+      });
+      el.chips = ['T', ...TAMANHOS].map(v => h('button', {
+        class: 'pn-chip', type: 'button', 'data-tam': v, 'aria-pressed': String(filtro.tam === v), text: v === 'T' ? 'Todos' : v,
+        onclick: () => { filtro.tam = v; el.chips.forEach(c => c.setAttribute('aria-pressed', String(c.dataset.tam === v))); desenharLista(); }
+      }));
+      el.mostrando = h('p', { class: 'pn-mostrando' });
+      el.lista = h('div');
+      partes.push(h('div', { class: 'pn-tools' }, el.busca, h('div', { class: 'pn-chips', role: 'group', 'aria-label': 'Filtrar por tamanho de fralda' }, el.chips),
+        h('button', { class: 'pn-btn pn-btn--ghost', type: 'button', onclick: baixarCsv, text: 'Baixar CSV' })));
+      partes.push(el.mostrando, el.lista);
+    }
+
+    // recados
+    const msgs = dados.mensagens || [];
+    partes.push(secao('Recados para o Dylan', msgs.length));
+    partes.push(msgs.length
+      ? h('div', { class: 'pn-msgs' }, msgs.map(m => h('figure', { class: 'pn-msg', style: 'margin:0' },
+        h('blockquote', { class: 'pn-msg__t', style: 'margin:0', text: m.recado }),
+        h('figcaption', { class: 'pn-msg__f' }, h('b', { text: m.nome }), m.presenca === 'Não' ? ' (não vai)' : '', ` · ${quando(m.quando)}`))))
+      : h('p', { class: 'pn-vazio', text: 'Ainda não há recados.' }));
+
+    // quem não vai
+    const nao = dados.nao_vao || [];
+    if (nao.length) {
+      partes.push(h('details', {},
+        h('summary', {}, secao('Avisaram que não vão', nao.length)),
+        h('div', { class: 'pn-tablewrap' }, h('table', { class: 'pn-table pn-table--stack' },
+          h('thead', {}, h('tr', {}, ['Nº', 'Nome', 'WhatsApp', 'Recebido'].map(x => h('th', { text: x })))),
+          h('tbody', {}, nao.map(p => h('tr', {},
+            h('td', { 'data-l': 'Convite', text: p.convite_numero == null ? '—' : p.convite_numero }),
+            h('td', { 'data-l': 'Nome', class: 'nome', text: p.nome }),
+            h('td', { 'data-l': 'WhatsApp' }, linkWhats(p.whatsapp)),
+            h('td', { 'data-l': 'Recebido', text: quando(p.quando) }))))))));
+    }
+
+    el.conteudo.replaceChildren(...partes);
+    if (conf.length) desenharLista();
+    if (estavaBuscando && el.busca) { el.busca.focus(); el.busca.setSelectionRange(filtro.texto.length, filtro.texto.length); }
+  }
+
+  function desenharLista() {
+    const q = norm(filtro.texto).trim();
+    const lista = (dados.confirmados || []).filter(p =>
+      (filtro.tam === 'T' || p.tamanho === filtro.tam) &&
+      (!q || norm(`${p.nome} ${p.whatsapp || ''} ${p.convite_numero == null ? '' : p.convite_numero}`).includes(q)));
+    const total = (dados.confirmados || []).length;
+    el.mostrando.textContent = lista.length === total ? `${plural(total, 'confirmado', 'confirmados')}` : `Mostrando ${lista.length} de ${total}`;
+    if (!lista.length) { el.lista.replaceChildren(h('p', { class: 'pn-vazio', text: 'Nenhum confirmado com esse filtro.' })); return; }
+    el.lista.replaceChildren(h('div', { class: 'pn-tablewrap' }, h('table', { class: 'pn-table pn-table--stack' },
+      h('thead', {}, h('tr', {}, ['Nº', 'Nome', 'WhatsApp', 'Acompanhantes', 'Pessoas', 'Fralda', 'Recebido'].map(x => h('th', { text: x })))),
+      h('tbody', {}, lista.map(p => {
+        const ac = (p.adultos || 0) + (p.criancas || 0);
+        return h('tr', {},
+          h('td', { 'data-l': 'Convite', text: p.convite_numero == null ? '—' : p.convite_numero }),
+          h('td', { 'data-l': 'Nome', class: 'nome', text: p.nome }),
+          h('td', { 'data-l': 'WhatsApp' }, linkWhats(p.whatsapp)),
+          h('td', { 'data-l': 'Acompanhantes', text: ac ? `${plural(p.adultos || 0, 'adulto', 'adultos')}, ${plural(p.criancas || 0, 'criança', 'crianças')}` : 'Vai sozinho(a)' }),
+          h('td', { 'data-l': 'Pessoas', class: 'num', text: nf.format(p.total || 0) }),
+          h('td', { 'data-l': 'Fralda' }, h('span', {}, h('span', { class: 'pn-tag', text: p.tamanho || '—' }), ` ${p.marca || ''}`)),
+          h('td', { 'data-l': 'Recebido', text: quando(p.quando) }));
+      })))));
+  }
+
+  /* ---------- exportar ---------- */
+  function baixarCsv() {
+    if (!dados) return;
+    const cab = ['Nº do convite', 'Nome', 'WhatsApp', 'Presença', 'Acompanhantes adultos', 'Acompanhantes crianças', 'Total de pessoas', 'Tamanho da fralda', 'Marca da fralda', 'Recado', 'Recebido em'];
+    const linhas = [];
+    (dados.confirmados || []).forEach(p => linhas.push([p.convite_numero, p.nome, p.whatsapp, 'Sim', p.adultos, p.criancas, p.total, p.tamanho, p.marca, p.recado, quandoCompleto(p.quando)]));
+    (dados.nao_vao || []).forEach(p => linhas.push([p.convite_numero, p.nome, p.whatsapp, 'Não', 0, 0, 0, '', '', p.recado, quandoCompleto(p.quando)]));
+    // célula que começa com = + - @ vira texto, para o Excel não executar como fórmula
+    const cel = v => { let s = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
+    const csv = '﻿' + [cab, ...linhas].map(l => l.map(cel).join(';')).join('\r\n') + '\r\n';
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const a = h('a', { href: url, download: 'respostas-cha-do-dylan.csv' });
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  /* ---------- abrir e fechar conforme o endereço (#painel) ---------- */
+  const ativo = () => location.hash === '#painel';
+
+  function abrir() {
+    document.body.classList.add('modo-painel');
+    root.hidden = false;
+    document.title = 'Painel de respostas · Chá de Fraldas do Dylan';
+    if (!montado) { montar(); montado = true; }
+    window.scrollTo(0, 0);
+    if (!SB_URL || !SB_KEY) { mostrarLogin('O banco de dados não está configurado nesta página.'); return; }
+    senha = memoria.ler();
+    if (senha) carregar(); else mostrarLogin('');
+    clearInterval(timer);
+    timer = setInterval(() => { if (!document.hidden && dados) carregar(); }, 60000);
+  }
+
+  function fechar() {
+    clearInterval(timer);
+    document.body.classList.remove('modo-painel');
+    root.hidden = true;
+    root.textContent = '';   // não deixa nomes e telefones na página depois de sair
+    montado = false;
+    dados = null;
+    senha = '';
+    document.title = TITULO_ORIGINAL;
+  }
+
+  function sincronizar() {
+    if (ativo()) { if (root.hidden) abrir(); } else if (!root.hidden) fechar();
+  }
+  window.addEventListener('hashchange', sincronizar);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && dados && !root.hidden) carregar(); });
+  sincronizar();
 })();
 
 </script>
